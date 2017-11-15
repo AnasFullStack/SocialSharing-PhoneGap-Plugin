@@ -116,6 +116,9 @@ static NSString *const kShareOptionUrl = @"url";
     UIActivity *activity = [[UIActivity alloc] init];
     NSArray *applicationActivities = [[NSArray alloc] initWithObjects:activity, nil];
     UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:applicationActivities];
+
+    activityVC.excludedActivityTypes = @[UIActivityTypePrint, UIActivityTypeCopyToPasteboard, UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll, UIActivityTypeAirDrop];
+
     if (subject != (id)[NSNull null] && subject != nil) {
       [activityVC setValue:subject forKey:@"subject"];
     }
@@ -318,7 +321,9 @@ static NSString *const kShareOptionUrl = @"url";
     // required for iOS6 (issues #162 and #167)
     [self.viewController dismissViewControllerAnimated:YES completion:nil];
   }];
-  [[self getTopMostViewController] presentViewController:composeViewController animated:YES completion:nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[self getTopMostViewController] presentViewController:composeViewController animated:YES completion:nil];
+    });
 }
 
 - (void)shareViaEmail:(CDVInvokedUrlCommand*)command {
